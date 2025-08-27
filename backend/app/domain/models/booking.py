@@ -1,10 +1,7 @@
-"""
-Domain model for Booking entity.
-Handles booking business logic and validations.
-"""
 from typing import Optional, Dict, Any
 from datetime import datetime, date
 from enum import Enum
+
 class BookingStatus(str, Enum):
     """Booking status enumeration"""
     PENDING = "pending"
@@ -25,18 +22,20 @@ class Booking:
     Booking domain entity.
     Encapsulates booking business logic and invariants.
     """
-    def init(self, booking_id: Optional[str], hotel_id: str,
-            user_id: str,
-            room_type: str,
-            check_in_date: date,
-            check_out_date: date,
-            guests_count: int,
-            total_price: float,
-            status: BookingStatus = BookingStatus.PENDING,
-            payment_status: PaymentStatus = PaymentStatus.PENDING,
-            special_requests: Optional[str] = None,
-            created_at: Optional[datetime] = None,
-            updated_at: Optional[datetime] = None ):
+    def __init__(self, 
+                 booking_id: Optional[str], 
+                 hotel_id: str,
+                 user_id: str,
+                 room_type: str,
+                 check_in_date: date,
+                 check_out_date: date,
+                 guests_count: int,
+                 total_price: float,
+                 status: BookingStatus = BookingStatus.PENDING,
+                 payment_status: PaymentStatus = PaymentStatus.PENDING,
+                 special_requests: Optional[str] = None,
+                 created_at: Optional[datetime] = None,
+                 updated_at: Optional[datetime] = None):
         self.booking_id = booking_id
         self.hotel_id = hotel_id
         self.user_id = user_id
