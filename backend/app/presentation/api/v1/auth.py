@@ -3,8 +3,8 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, EmailStr
-from infrastructure.security.auth import AuthService
-from dependencies import get_user_repository
+from app.infrastructure.security.auth import AuthService
+from app.dependencies import get_user_repository
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 security = HTTPBearer()
