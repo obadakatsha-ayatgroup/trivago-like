@@ -1,7 +1,3 @@
-"""
-Domain model for Hotel entity.
-Pure domain object following SRP - only contains hotel business logic.
-"""
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
@@ -29,11 +25,12 @@ class Amenity(str, Enum):
 
 class Room:
     """Room value object"""
-    def init(self, room_type: str, price_per_night: float,
-            capacity: int,
-            available_count: int,
-            description: str = "" ):
-        
+    def __init__(self, 
+                 room_type: str, 
+                 price_per_night: float,
+                 capacity: int,
+                 available_count: int,
+                 description: str = ""):
         self.room_type = room_type
         self.price_per_night = price_per_night
         self.capacity = capacity
@@ -51,11 +48,13 @@ class Room:
     
 class Location:
     """Location value object"""
-    def init(self, address: str, city: str, country: str,
-            latitude: float,
-            longitude: float,
-            postal_code: Optional[str] = None ):
-        
+    def __init__(self, 
+                 address: str, 
+                 city: str, 
+                 country: str,
+                 latitude: float,
+                 longitude: float,
+                 postal_code: Optional[str] = None):
         self.address = address
         self.city = city
         self.country = country
@@ -78,19 +77,21 @@ class Hotel:
     Hotel domain entity.
     Represents core hotel business logic and rules.
     """
-    def init(self, hotel_id: Optional[str], name: str,
-            description: str,
-            location: Location,
-            category: HotelCategory,
-            star_rating: int,
-            amenities: List[Amenity],
-            rooms: List[Room],
-            images: List[str],
-            check_in_time: str = "14:00",
-            check_out_time: str = "11:00",
-            policies: Optional[Dict[str, str]] = None,
-            created_at: Optional[datetime] = None,
-            updated_at: Optional[datetime] = None):
+    def __init__(self, 
+                 hotel_id: Optional[str], 
+                 name: str,
+                 description: str,
+                 location: Location,
+                 category: HotelCategory,
+                 star_rating: int,
+                 amenities: List[Amenity],
+                 rooms: List[Room],
+                 images: List[str],
+                 check_in_time: str = "14:00",
+                 check_out_time: str = "11:00",
+                 policies: Optional[Dict[str, str]] = None,
+                 created_at: Optional[datetime] = None,
+                 updated_at: Optional[datetime] = None):
         self.hotel_id = hotel_id
         self.name = name
         self.description = description
