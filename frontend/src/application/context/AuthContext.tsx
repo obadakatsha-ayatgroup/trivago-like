@@ -1,61 +1,67 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '@/domain/models/User';
+import { AuthApi } from '@/infrastructure/api/AuthApi';
 
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, fullName: string, phone?: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const authApi = new AuthApi();
 
   useEffect(() => {
     // Check for stored auth token on mount
     const token = localStorage.getItem('authToken');
     if (token) {
-      // Validate token and fetch user data
-      fetchUserData(token);
+      validateTokenAndFetchUser();
+    } else {
+      setLoading(false);
     }
   }, []);
 
-  const fetchUserData = async (token: string) => {
+  const validateTokenAndFetchUser = async () => {
     try {
-      // Mock user data - replace with actual API call
-      const userData: User = {
-        id: '1',
-        email: 'user@example.com',
-        firstName: 'John',
-        lastName: 'Doe',
-        preferences: {
-          currency: 'USD',
-          language: 'en',
-          notifications: true
-        }
-      };
+      const userData = await authApi.getCurrentUser();
       setUser(userData);
     } catch (error) {
       console.error('Failed to fetch user data:', error);
       localStorage.removeItem('authToken');
+    } finally {
+      setLoading(false);
     }
   };
 
   const login = async (email: string, password: string) => {
     try {
-      // Mock login - replace with actual API call
-      const token = 'mock-jwt-token';
-      localStorage.setItem('authToken', token);
-      await fetchUserData(token);
+      const { user: userData } = await authApi.login(email, password);
+      setUser(userData);
     } catch (error) {
       throw new Error('Login failed');
     }
   };
 
+  const register = async (email: string, password: string, fullName: string, phone?: string) => {
+    try {
+      const userData = await authApi.register(email, password, fullName, phone);
+      setUser(userData);
+      // Auto-login after registration
+      await login(email, password);
+    } catch (error) {
+      throw new Error('Registration failed');
+    }
+  };
+
   const logout = () => {
-    localStorage.removeItem('authToken');
+    authApi.logout();
     setUser(null);
   };
 
@@ -63,8 +69,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     <AuthContext.Provider value={{
       user,
       login,
+      register,
       logout,
-      isAuthenticated: !!user
+      isAuthenticated: !!user,
+      loading
     }}>
       {children}
     </AuthContext.Provider>
