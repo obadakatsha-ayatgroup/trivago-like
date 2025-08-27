@@ -1,10 +1,7 @@
-"""
-Domain model for User entity.
-Manages user-related business logic.
-"""
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from enum import Enum
+
 class UserRole(str, Enum):
     """User role enumeration"""
     GUEST = "guest"
@@ -16,15 +13,17 @@ class User:
     User domain entity.
     Handles user authentication and profile management.
     """
-    def init(self, user_id: Optional[str], email: str,
-            full_name: str,
-            phone_number: Optional[str] = None,
-            role: UserRole = UserRole.GUEST,
-            is_active: bool = True,
-            is_verified: bool = False,
-            preferences: Optional[Dict[str, Any]] = None,
-            created_at: Optional[datetime] = None,
-            updated_at: Optional[datetime] = None):
+    def __init__(self, 
+                 user_id: Optional[str], 
+                 email: str,
+                 full_name: str,
+                 phone_number: Optional[str] = None,
+                 role: UserRole = UserRole.GUEST,
+                 is_active: bool = True,
+                 is_verified: bool = False,
+                 preferences: Optional[Dict[str, Any]] = None,
+                 created_at: Optional[datetime] = None,
+                 updated_at: Optional[datetime] = None):
         self.user_id = user_id
         self.email = email
         self.full_name = full_name
