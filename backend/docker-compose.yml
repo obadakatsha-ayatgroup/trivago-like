@@ -1,0 +1,30 @@
+services:
+  mongodb:
+    image: mongo:7.0.23-rc1-jammy
+    container_name: trivago_mongodb
+    restart: always
+    ports:
+      - "27007:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: trivago_clone
+    volumes:
+    - ./mongodb_data:/data/db
+
+
+#   backend:
+#     build: .
+#     container_name: trivago_backend
+#     restart: always
+#     ports:
+#     - "8000:8000"
+#     environment:
+#     MONGODB_URL: mongodb://admin:password@mongodb:27007
+#     DATABASE_NAME: trivago_clone
+#     depends_on:
+#     - mongodb
+#     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+# volumes:
+# mongodb_data:
