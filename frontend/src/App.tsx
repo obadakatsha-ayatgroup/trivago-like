@@ -7,8 +7,11 @@ import HomePage from './presentation/pages/HomePage';
 import SearchPage from './presentation/pages/SearchPage';
 import HotelPage from './presentation/pages/HotelPage';
 import BookingsPage from './presentation/pages/BookingsPage';
+import LoginPage from './presentation/pages/LoginPage';
+import RegisterPage from './presentation/pages/RegisterPage';
 import Header from './presentation/components/common/Header';
 import Footer from './presentation/components/common/Footer';
+import ProtectedRoute from './presentation/components/auth/ProtectedRoute';
 
 const App: React.FC = () => {
   return (
@@ -23,7 +26,16 @@ const App: React.FC = () => {
                   <Route path="/" element={<HomePage />} />
                   <Route path="/search" element={<SearchPage />} />
                   <Route path="/hotels/:id" element={<HotelPage />} />
-                  <Route path="/bookings" element={<BookingsPage />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/register" element={<RegisterPage />} />
+                  <Route 
+                    path="/bookings" 
+                    element={
+                      <ProtectedRoute>
+                        <BookingsPage />
+                      </ProtectedRoute>
+                    } 
+                  />
                 </Routes>
               </main>
               <Footer />
