@@ -5,10 +5,10 @@ Handles advanced hotel search operations.
 from typing import List, Dict, Any
 from fastapi import APIRouter, Depends, Query
 from datetime import date
-from application.services.search_service import SearchService
-from application.dto.search_dto import SearchQueryDTO, SearchResultDTO
-from application.dto.hotel_dto import HotelResponseDTO
-from dependencies import get_search_service
+from app.application.services.search_service import SearchService
+from app.application.dto.search_dto import SearchQueryDTO, SearchResultDTO
+from app.application.dto.hotel_dto import HotelResponseDTO
+from app.dependencies import get_search_service
 from typing import Optional
 
 

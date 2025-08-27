@@ -4,9 +4,9 @@ Manages booking operations and validations.
 """
 from typing import List, Optional
 from datetime import date
-from domain.models.booking import Booking, BookingStatus
-from domain.interfaces.repositories import IBookingRepository, IHotelRepository
-from application.dto.booking_dto import CreateBookingDTO, BookingResponseDTO
+from app.domain.models.booking import Booking, BookingStatus
+from app.domain.interfaces.repositories import IBookingRepository, IHotelRepository
+from app.application.dto.booking_dto import CreateBookingDTO, BookingResponseDTO
 
 class BookingService:
     """

@@ -4,9 +4,9 @@ Manages booking-related HTTP operations.
 """
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
-from application.services.booking_service import BookingService
-from application.dto.booking_dto import CreateBookingDTO, BookingResponseDTO
-from dependencies import get_booking_service
+from app.application.services.booking_service import BookingService
+from app.application.dto.booking_dto import CreateBookingDTO, BookingResponseDTO
+from ....dependencies import get_booking_service
 
 router = APIRouter(prefix="/bookings", tags=["bookings"])
 

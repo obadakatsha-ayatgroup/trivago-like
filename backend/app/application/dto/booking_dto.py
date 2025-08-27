@@ -4,7 +4,7 @@ Booking Data Transfer Objects.
 from typing import Optional
 from pydantic import BaseModel, Field, validator
 from datetime import date
-from domain.models.booking import Booking
+from app.domain.models.booking import Booking
 
 class CreateBookingDTO(BaseModel):
     """DTO for creating a booking"""

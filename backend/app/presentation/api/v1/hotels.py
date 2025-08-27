@@ -4,9 +4,9 @@ Handles HTTP requests and responses for hotel operations.
 """
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
-from application.services.hotel_service import HotelService
-from application.dto.hotel_dto import CreateHotelDTO, UpdateHotelDTO, HotelResponseDTO
-from dependencies import get_hotel_service
+from app.application.services.hotel_service import HotelService
+from app.application.dto.hotel_dto import CreateHotelDTO, UpdateHotelDTO, HotelResponseDTO
+from app.dependencies import get_hotel_service
 
 router = APIRouter(prefix="/hotels", tags=["hotels"])
 

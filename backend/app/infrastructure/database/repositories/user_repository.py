@@ -1,13 +1,9 @@
-"""
-Concrete implementation of User repository.
-Implements IUserRepository interface with MongoDB.
-"""
 from typing import Optional, Dict, Any
 from datetime import datetime
 from bson import ObjectId
-from domain.interfaces.repositories import IUserRepository
-from domain.models.user import User, UserRole
-from infrastructure.database.mongodb import MongoDB
+from app.domain.interfaces.repositories import IUserRepository
+from app.domain.models.user import User, UserRole
+from app.infrastructure.database.mongodb import MongoDB
 
 class MongoUserRepository(IUserRepository):
     """
@@ -16,11 +12,10 @@ class MongoUserRepository(IUserRepository):
     """
     def __init__(self):
         self.collection_name = "users"
-        self.mongo = MongoDB()
 
     def _get_collection(self):
         """Get users collection"""
-        db = self.mongo.get_database()
+        db = MongoDB.get_database()
         return db[self.collection_name]
 
     def _document_to_user(self, doc: Dict[str, Any]) -> User:
@@ -30,12 +25,12 @@ class MongoUserRepository(IUserRepository):
             email=doc["email"],
             full_name=doc["full_name"],
             phone_number=doc.get("phone_number"),
-            role=UserRole(doc.get("role", UserRole.GUEST)),
+            role=UserRole(doc.get("role", UserRole.GUEST.value)),
             is_active=doc.get("is_active", True),
             is_verified=doc.get("is_verified", False),
             preferences=doc.get("preferences", {}),
-            created_at=doc.get("created_at"),
-            updated_at=doc.get("updated_at")
+            created_at=datetime.fromisoformat(doc["created_at"]) if doc.get("created_at") else None,
+            updated_at=datetime.fromisoformat(doc["updated_at"]) if doc.get("updated_at") else None
         )
 
     def _user_to_document(self, user: User) -> Dict[str, Any]:
@@ -51,8 +46,8 @@ class MongoUserRepository(IUserRepository):
         """Create a new user"""
         collection = self._get_collection()
         doc = self._user_to_document(user)
-        doc["created_at"] = datetime.utcnow()
-        doc["updated_at"] = datetime.utcnow()
+        doc["created_at"] = datetime.utcnow().isoformat()
+        doc["updated_at"] = datetime.utcnow().isoformat()
         
         result = await collection.insert_one(doc)
         user.user_id = str(result.inserted_id)
@@ -74,7 +69,7 @@ class MongoUserRepository(IUserRepository):
         """Update user"""
         collection = self._get_collection()
         doc = self._user_to_document(user)
-        doc["updated_at"] = datetime.utcnow()
+        doc["updated_at"] = datetime.utcnow().isoformat()
         doc.pop("_id", None)
         
         result = await collection.update_one(

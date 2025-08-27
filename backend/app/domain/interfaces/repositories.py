@@ -5,9 +5,9 @@ Domain layer defines interfaces, infrastructure implements them.
 from abc import ABC, abstractmethod
 from typing import List, Optional, Dict, Any
 from datetime import date
-from domain.models.hotel import Hotel
-from domain.models.booking import Booking
-from domain.models.user import User
+from app.domain.models.hotel import Hotel
+from app.domain.models.booking import Booking
+from app.domain.models.user import User
 class IHotelRepository(ABC):
     """
     Hotel repository interface.

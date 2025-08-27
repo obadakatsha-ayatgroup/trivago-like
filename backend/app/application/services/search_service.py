@@ -5,9 +5,9 @@ Implements complex search algorithms and scoring.
 from typing import List, Optional, Dict, Any
 from datetime import date
 import math
-from domain.interfaces.repositories import IHotelRepository
-from application.dto.search_dto import SearchQueryDTO, SearchResultDTO
-from application.dto.hotel_dto import HotelResponseDTO
+from app.domain.interfaces.repositories import IHotelRepository
+from app.application.dto.search_dto import SearchQueryDTO, SearchResultDTO
+from app.application.dto.hotel_dto import HotelResponseDTO
 
 
 class SearchService:

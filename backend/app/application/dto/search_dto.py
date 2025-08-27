@@ -4,7 +4,7 @@ Search-related Data Transfer Objects.
 from typing import List, Optional
 from pydantic import BaseModel, Field
 from datetime import date
-from application.dto.hotel_dto import HotelResponseDTO
+from app.application.dto.hotel_dto import HotelResponseDTO
 
 class SearchQueryDTO(BaseModel):
     """DTO for search queries"""

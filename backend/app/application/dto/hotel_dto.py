@@ -5,7 +5,7 @@ Separates API contract from domain models (SRP).
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field, validator
 from datetime import datetime
-from domain.models.hotel import Hotel, HotelCategory, Amenity, Room, Location
+from app.domain.models.hotel import Hotel, HotelCategory, Amenity, Room, Location
 
 class LocationDTO(BaseModel):
     """Location data transfer object"""

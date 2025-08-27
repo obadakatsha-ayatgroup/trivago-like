@@ -1,13 +1,11 @@
-"""
-Concrete implementation of Booking repository.
-Implements IBookingRepository interface with MongoDB.
-"""
 from typing import List, Optional, Dict, Any
 from datetime import date, datetime
 from bson import ObjectId
-from domain.interfaces.repositories import IBookingRepository
-from domain.models.booking import Booking, BookingStatus, PaymentStatus
-from infrastructure.database.mongodb import MongoDB
+
+# Fix imports - use absolute imports from app root
+from app.domain.interfaces.repositories import IBookingRepository
+from app.domain.models.booking import Booking, BookingStatus, PaymentStatus
+from app.infrastructure.database.mongodb import MongoDB
 
 
 class MongoBookingRepository(IBookingRepository):
@@ -17,11 +15,10 @@ class MongoBookingRepository(IBookingRepository):
     """
     def __init__(self):
         self.collection_name = "bookings"
-        self.mongo = MongoDB()
 
     def _get_collection(self):
         """Get bookings collection"""
-        db = self.mongo.get_database()
+        db = MongoDB.get_database()
         return db[self.collection_name]
 
     def _document_to_booking(self, doc: Dict[str, Any]) -> Booking:
@@ -38,8 +35,8 @@ class MongoBookingRepository(IBookingRepository):
             status=BookingStatus(doc["status"]),
             payment_status=PaymentStatus(doc["payment_status"]),
             special_requests=doc.get("special_requests"),
-            created_at=doc.get("created_at"),
-            updated_at=doc.get("updated_at")
+            created_at=datetime.fromisoformat(doc["created_at"]) if doc.get("created_at") else None,
+            updated_at=datetime.fromisoformat(doc["updated_at"]) if doc.get("updated_at") else None
         )
 
     def _booking_to_document(self, booking: Booking) -> Dict[str, Any]:
@@ -50,12 +47,13 @@ class MongoBookingRepository(IBookingRepository):
         else:
             doc.pop("_id", None)
         return doc
+    
     async def create(self, booking: Booking) -> Booking:
         """Create a new booking"""
         collection = self._get_collection()
         doc = self._booking_to_document(booking)
-        doc["created_at"] = datetime.utcnow()
-        doc["updated_at"] = datetime.utcnow()
+        doc["created_at"] = datetime.utcnow().isoformat()
+        doc["updated_at"] = datetime.utcnow().isoformat()
         
         result = await collection.insert_one(doc)
         booking.booking_id = str(result.inserted_id)
@@ -89,7 +87,7 @@ class MongoBookingRepository(IBookingRepository):
         """Update booking"""
         collection = self._get_collection()
         doc = self._booking_to_document(booking)
-        doc["updated_at"] = datetime.utcnow()
+        doc["updated_at"] = datetime.utcnow().isoformat()
         doc.pop("_id", None)
         
         result = await collection.update_one(
@@ -121,7 +119,7 @@ class MongoBookingRepository(IBookingRepository):
         overlapping = await collection.count_documents({
             "hotel_id": hotel_id,
             "room_type": room_type,
-            "status": {"$in": [BookingStatus.CONFIRMED, BookingStatus.PENDING]},
+            "status": {"$in": [BookingStatus.CONFIRMED.value, BookingStatus.PENDING.value]},
             "$or": [
                 {
                     "check_in_date": {"$lt": check_out.isoformat()},

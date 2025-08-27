@@ -1,13 +1,9 @@
-"""
-Concrete implementation of Hotel repository.
-Implements IHotelRepository interface with MongoDB.
-"""
 from typing import List, Optional, Dict, Any
 from datetime import date, datetime
 from bson import ObjectId
-from domain.interfaces.repositories import IHotelRepository
-from domain.models.hotel import Hotel, HotelCategory, Amenity, Room, Location
-from infrastructure.database.mongodb import MongoDB
+from app.domain.interfaces.repositories import IHotelRepository
+from app.domain.models.hotel import Hotel, HotelCategory, Amenity, Room, Location
+from app.infrastructure.database.mongodb import MongoDB
 
 class MongoHotelRepository(IHotelRepository):
     """
@@ -16,11 +12,10 @@ class MongoHotelRepository(IHotelRepository):
     """
     def __init__(self):
         self.collection_name = "hotels"
-        self.mongo = MongoDB()
 
     def _get_collection(self):
         """Get hotels collection"""
-        db = self.mongo.get_database()
+        db = MongoDB.get_database()
         return db[self.collection_name]
 
     def _document_to_hotel(self, doc: Dict[str, Any]) -> Hotel:
@@ -58,8 +53,8 @@ class MongoHotelRepository(IHotelRepository):
             check_in_time=doc.get("check_in_time", "14:00"),
             check_out_time=doc.get("check_out_time", "11:00"),
             policies=doc.get("policies", {}),
-            created_at=doc.get("created_at"),
-            updated_at=doc.get("updated_at")
+            created_at=datetime.fromisoformat(doc["created_at"]) if doc.get("created_at") else None,
+            updated_at=datetime.fromisoformat(doc["updated_at"]) if doc.get("updated_at") else None
         )
 
     def _hotel_to_document(self, hotel: Hotel) -> Dict[str, Any]:
@@ -75,8 +70,8 @@ class MongoHotelRepository(IHotelRepository):
         """Create a new hotel"""
         collection = self._get_collection()
         doc = self._hotel_to_document(hotel)
-        doc["created_at"] = datetime.utcnow()
-        doc["updated_at"] = datetime.utcnow()
+        doc["created_at"] = datetime.utcnow().isoformat()
+        doc["updated_at"] = datetime.utcnow().isoformat()
         
         result = await collection.insert_one(doc)
         hotel.hotel_id = str(result.inserted_id)
@@ -101,7 +96,7 @@ class MongoHotelRepository(IHotelRepository):
         """Update hotel"""
         collection = self._get_collection()
         doc = self._hotel_to_document(hotel)
-        doc["updated_at"] = datetime.utcnow()
+        doc["updated_at"] = datetime.utcnow().isoformat()
         doc.pop("_id", None)  # Remove _id from update
         
         result = await collection.update_one(

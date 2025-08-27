@@ -4,9 +4,9 @@ Orchestrates hotel-related operations following SRP.
 """
 from typing import List, Optional
 from datetime import date
-from domain.models.hotel import Hotel
-from domain.interfaces.repositories import IHotelRepository
-from application.dto.hotel_dto import CreateHotelDTO, UpdateHotelDTO, HotelResponseDTO
+from app.domain.models.hotel import Hotel
+from app.domain.interfaces.repositories import IHotelRepository
+from app.application.dto.hotel_dto import CreateHotelDTO, UpdateHotelDTO, HotelResponseDTO
 
 class HotelService:
     """
