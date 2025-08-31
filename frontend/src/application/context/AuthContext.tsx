@@ -35,6 +35,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } catch (error) {
       console.error('Failed to fetch user data:', error);
       localStorage.removeItem('authToken');
+      setUser(null);
     } finally {
       setLoading(false);
     }
@@ -52,7 +53,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const register = async (email: string, password: string, fullName: string, phone?: string) => {
     try {
       const userData = await authApi.register(email, password, fullName, phone);
-      setUser(userData);
       // Auto-login after registration
       await login(email, password);
     } catch (error) {
@@ -63,6 +63,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const logout = () => {
     authApi.logout();
     setUser(null);
+    // Redirect to home page after logout
+    window.location.href = '/';
   };
 
   return (
