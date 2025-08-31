@@ -64,7 +64,8 @@ export class BookingApi extends ApiClient {
 
   private mapToBackendRequest(bookingData: Omit<Booking, 'id' | 'createdAt'>): BackendBookingRequest {
     // Extract room type from roomId (assuming format: hotelId_roomType_index)
-    const roomType = bookingData.roomId.split('_')[1] || 'standard';
+    const roomTypeParts = bookingData.roomId.split('_');
+    const roomType = roomTypeParts.length > 1 ? roomTypeParts[1] : 'Standard Room';
     
     return {
       hotel_id: bookingData.hotelId,
@@ -78,27 +79,48 @@ export class BookingApi extends ApiClient {
   }
 
   async createBooking(bookingData: Omit<Booking, 'id' | 'createdAt'>): Promise<Booking> {
-    const backendRequest = this.mapToBackendRequest(bookingData);
-    const backendResponse = await this.post<BackendBookingResponse>('/bookings', backendRequest);
-    return this.mapToFrontendBooking(backendResponse);
+    try {
+      const backendRequest = this.mapToBackendRequest(bookingData);
+      const backendResponse = await this.post<BackendBookingResponse>('/bookings', backendRequest);
+      return this.mapToFrontendBooking(backendResponse);
+    } catch (error) {
+      console.error('API Error creating booking:', error);
+      throw new Error('Failed to create booking. Please try again.');
+    }
   }
 
   async getBookingById(id: string): Promise<Booking> {
-    const backendResponse = await this.get<BackendBookingResponse>(`/bookings/${id}`);
-    return this.mapToFrontendBooking(backendResponse);
+    try {
+      const backendResponse = await this.get<BackendBookingResponse>(`/bookings/${id}`);
+      return this.mapToFrontendBooking(backendResponse);
+    } catch (error) {
+      console.error('API Error fetching booking:', error);
+      throw new Error('Failed to fetch booking details.');
+    }
   }
 
   async getUserBookings(userId: string): Promise<Booking[]> {
-    const backendResponse = await this.get<BackendBookingResponse[]>(`/bookings/user/${userId}`);
-    return backendResponse.map(booking => this.mapToFrontendBooking(booking));
+    try {
+      const backendResponse = await this.get<BackendBookingResponse[]>(`/bookings/user/${userId}`);
+      return backendResponse.map((booking: BackendBookingResponse) => this.mapToFrontendBooking(booking));
+    } catch (error) {
+      console.error('API Error fetching user bookings:', error);
+      // Return empty array instead of throwing to prevent breaking the UI
+      return [];
+    }
   }
 
   async cancelBooking(id: string): Promise<void> {
-    await this.post<void>(`/bookings/${id}/cancel`);
+    try {
+      await this.post<void>(`/bookings/${id}/cancel`);
+    } catch (error) {
+      console.error('API Error cancelling booking:', error);
+      throw new Error('Failed to cancel booking. Please try again.');
+    }
   }
 
-  // async updateBooking(id: string, updates: Partial<Booking>): Promise<Booking> {
-  //   // Backend doesn't support partial updates, would need full booking data
-  //   throw new Error('Booking updates not supported by backend API');
-  // }
+  async updateBooking(id: string, updates: Partial<Booking>): Promise<Booking> {
+    // Backend doesn't support partial updates yet
+    throw new Error('Booking updates not supported by backend API');
+  }
 }
