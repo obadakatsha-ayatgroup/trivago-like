@@ -1,5 +1,5 @@
 import { ApiClient } from './ApiClient';
-import { Hotel } from '@/domain/models/Hotel';
+import { Hotel, Room } from '@/domain/models/Hotel';
 import { SearchCriteria, SearchFilters } from '@/domain/models/Search';
 import { HotelMapper } from './mappers/HotelMapper';
 
@@ -24,15 +24,15 @@ export class HotelApi extends ApiClient {
     return HotelMapper.toFrontendModel(backendHotel);
   }
 
-  // async getAvailableRooms(hotelId: string, checkIn: Date, checkOut: Date): Promise<Room[]> {
-  //   // Backend doesn't have separate rooms endpoint, get from hotel details
-  //   const hotel = await this.getHotelById(hotelId);
-  //   return hotel.rooms.filter(room => room.available);
-  // }
+  async getAvailableRooms(hotelId: string, checkIn: Date, checkOut: Date): Promise<Room[]> {
+    // Backend doesn't have separate rooms endpoint, get from hotel details
+    const hotel = await this.getHotelById(hotelId);
+    return hotel.rooms.filter(room => room.available);
+  }
 
-  // async getNearbyHotels(lat: number, lng: number, radius: number): Promise<Hotel[]> {
-  //   // Backend doesn't have nearby hotels endpoint yet, return empty for now
-  //   console.warn('Nearby hotels not implemented in backend yet');
-  //   return [];
-  // }
+  async getNearbyHotels(lat: number, lng: number, radius: number): Promise<Hotel[]> {
+    // Backend doesn't have nearby hotels endpoint yet, return empty for now
+    console.warn('Nearby hotels not implemented in backend yet');
+    return [];
+  }
 }
