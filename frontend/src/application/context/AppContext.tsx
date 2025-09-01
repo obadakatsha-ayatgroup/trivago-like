@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { User } from '@/domain/models/User';
+import { useAuth } from './AuthContext';
 
 interface AppContextType {
   user: User | null;
@@ -16,6 +17,18 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [user, setUser] = useState<User | null>(null);
   const [currency, setCurrency] = useState('USD');
   const [language, setLanguage] = useState('en');
+  
+  // Get auth context to sync user state
+  const authContext = useAuth();
+  
+  // Sync user state with auth context
+  useEffect(() => {
+    if (authContext?.user) {
+      setUser(authContext.user);
+    } else {
+      setUser(null);
+    }
+  }, [authContext?.user]);
 
   return (
     <AppContext.Provider value={{
