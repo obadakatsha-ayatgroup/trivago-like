@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SearchCriteria } from '@/domain/models/Search';
 import { format } from 'date-fns';
 
@@ -18,32 +18,96 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, initialCriteria }) => {
   const [guests, setGuests] = useState(initialCriteria?.guests || 2);
   const [rooms, setRooms] = useState(initialCriteria?.rooms || 1);
 
+  // Set default dates if not provided
+  useEffect(() => {
+    if (!checkIn && !initialCriteria) {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      setCheckIn(format(tomorrow, 'yyyy-MM-dd'));
+    }
+    
+    if (!checkOut && !initialCriteria) {
+      const dayAfter = new Date();
+      dayAfter.setDate(dayAfter.getDate() + 2);
+      setCheckOut(format(dayAfter, 'yyyy-MM-dd'));
+    }
+  }, [checkIn, checkOut, initialCriteria]);
+
+  // Update form when initialCriteria changes
+  useEffect(() => {
+    if (initialCriteria) {
+      setDestination(initialCriteria.destination);
+      setCheckIn(format(initialCriteria.checkIn, 'yyyy-MM-dd'));
+      setCheckOut(format(initialCriteria.checkOut, 'yyyy-MM-dd'));
+      setGuests(initialCriteria.guests);
+      setRooms(initialCriteria.rooms);
+    }
+  }, [initialCriteria]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (destination && checkIn && checkOut) {
-      onSearch({
-        destination,
-        checkIn: new Date(checkIn),
-        checkOut: new Date(checkOut),
-        guests,
-        rooms
-      });
+    
+    if (!destination.trim()) {
+      alert('Please enter a destination');
+      return;
+    }
+    
+    if (!checkIn || !checkOut) {
+      alert('Please select check-in and check-out dates');
+      return;
+    }
+    
+    const checkInDate = new Date(checkIn);
+    const checkOutDate = new Date(checkOut);
+    
+    if (checkInDate >= checkOutDate) {
+      alert('Check-out date must be after check-in date');
+      return;
+    }
+    
+    if (checkInDate < new Date(new Date().setHours(0, 0, 0, 0))) {
+      alert('Check-in date cannot be in the past');
+      return;
+    }
+
+    onSearch({
+      destination: destination.trim(),
+      checkIn: checkInDate,
+      checkOut: checkOutDate,
+      guests: Math.max(1, guests),
+      rooms: Math.max(1, rooms)
+    });
+  };
+
+  const handleGuestsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value);
+    if (!isNaN(value) && value >= 1) {
+      setGuests(value);
+    }
+  };
+
+  const handleRoomsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value);
+    if (!isNaN(value) && value >= 1) {
+      setRooms(value);
     }
   };
 
   return (
     <form className="search-bar" onSubmit={handleSubmit}>
       <div className="search-bar__field">
-        <label htmlFor="destination">Destination</label>
+        <label htmlFor="destination">Where are you going?</label>
         <input
           id="destination"
           type="text"
           value={destination}
           onChange={(e) => setDestination(e.target.value)}
-          placeholder="City, hotel, or region"
+          placeholder="Destination, city, hotel name"
           required
+          autoComplete="off"
         />
       </div>
+      
       <div className="search-bar__field">
         <label htmlFor="check-in">Check-in</label>
         <input
@@ -51,9 +115,11 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, initialCriteria }) => {
           type="date"
           value={checkIn}
           onChange={(e) => setCheckIn(e.target.value)}
+          min={format(new Date(), 'yyyy-MM-dd')}
           required
         />
       </div>
+      
       <div className="search-bar__field">
         <label htmlFor="check-out">Check-out</label>
         <input
@@ -61,29 +127,37 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, initialCriteria }) => {
           type="date"
           value={checkOut}
           onChange={(e) => setCheckOut(e.target.value)}
+          min={checkIn || format(new Date(), 'yyyy-MM-dd')}
           required
         />
       </div>
+      
       <div className="search-bar__field">
         <label htmlFor="guests">Guests</label>
         <input
           id="guests"
           type="number"
           min="1"
+          max="10"
           value={guests}
-          onChange={(e) => setGuests(parseInt(e.target.value))}
+          onChange={handleGuestsChange}
+          required
         />
       </div>
+      
       <div className="search-bar__field">
         <label htmlFor="rooms">Rooms</label>
         <input
           id="rooms"
           type="number"
           min="1"
+          max="5"
           value={rooms}
-          onChange={(e) => setRooms(parseInt(e.target.value))}
+          onChange={handleRoomsChange}
+          required
         />
       </div>
+      
       <button type="submit" className="search-bar__submit">
         Search
       </button>

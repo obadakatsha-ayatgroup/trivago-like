@@ -12,15 +12,18 @@ export class HotelService implements IHotelService {
 
   async searchHotels(criteria: SearchCriteria, filters?: SearchFilters): Promise<Hotel[]> {
     try {
+      // Use real API now that we have seeded data
       return await this.hotelApi.searchHotels(criteria, filters);
     } catch (error) {
       console.error('Error searching hotels:', error);
-      throw error;
+      // Return empty array on error instead of mock data
+      return [];
     }
   }
 
   async getHotelById(id: string): Promise<Hotel> {
     try {
+      // Use real API
       return await this.hotelApi.getHotelById(id);
     } catch (error) {
       console.error('Error fetching hotel:', error);
@@ -42,7 +45,7 @@ export class HotelService implements IHotelService {
       return await this.hotelApi.getNearbyHotels(latitude, longitude, radius);
     } catch (error) {
       console.error('Error fetching nearby hotels:', error);
-      throw error;
+      return [];
     }
   }
 }

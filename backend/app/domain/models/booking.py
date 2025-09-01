@@ -57,8 +57,8 @@ class Booking:
         """Validate check-in and check-out dates"""
         if self.check_out_date <= self.check_in_date:
             raise ValueError("Check-out date must be after check-in date")
-        if self.check_in_date < date.today():
-            raise ValueError("Check-in date cannot be in the past")
+        # if self.check_in_date < date.today():
+        #     raise ValueError("Check-in date cannot be in the past")
 
     def _validate_guests(self):
         """Validate guest count"""
