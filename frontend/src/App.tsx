@@ -7,7 +7,7 @@ import HomePage from './presentation/pages/HomePage';
 import SearchPage from './presentation/pages/SearchPage';
 import HotelPage from './presentation/pages/HotelPage';
 import BookingsPage from './presentation/pages/BookingsPage';
-import BookingPage from './presentation/pages/BookingsPage';
+import NewBookingPage from './presentation/pages/NewBookingPage'; // Renamed for clarity
 import LoginPage from './presentation/pages/LoginPage';
 import RegisterPage from './presentation/pages/RegisterPage';
 import Header from './presentation/components/common/Header';
@@ -30,14 +30,18 @@ const App: React.FC = () => {
                   <Route path="/hotels/:id" element={<HotelPage />} />
                   <Route path="/login" element={<LoginPage />} />
                   <Route path="/register" element={<RegisterPage />} />
+                  
+                  {/* Booking creation page (protected) */}
                   <Route 
                     path="/booking/new" 
                     element={
                       <ProtectedRoute>
-                        <BookingPage />
+                        <NewBookingPage />
                       </ProtectedRoute>
                     } 
                   />
+                  
+                  {/* User's bookings list page (protected) */}
                   <Route 
                     path="/bookings" 
                     element={
