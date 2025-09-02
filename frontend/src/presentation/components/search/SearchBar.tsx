@@ -79,14 +79,14 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, initialCriteria }) => {
     });
   };
 
-  const handleGuestsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleGuestsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(e.target.value);
     if (!isNaN(value) && value >= 1) {
       setGuests(value);
     }
   };
 
-  const handleRoomsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleRoomsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = parseInt(e.target.value);
     if (!isNaN(value) && value >= 1) {
       setRooms(value);
@@ -95,20 +95,20 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, initialCriteria }) => {
 
   return (
     <form className="search-bar" onSubmit={handleSubmit}>
-      <div className="search-bar__field">
-        <label htmlFor="destination">Where are you going?</label>
+      <div className="search-bar__field search-bar__field--destination">
+        <label htmlFor="destination">Destination</label>
         <input
           id="destination"
           type="text"
           value={destination}
           onChange={(e) => setDestination(e.target.value)}
-          placeholder="Destination, city, hotel name"
+          placeholder="City, hotel, landmark"
           required
           autoComplete="off"
         />
       </div>
       
-      <div className="search-bar__field">
+      <div className="search-bar__field search-bar__field--checkin">
         <label htmlFor="check-in">Check-in</label>
         <input
           id="check-in"
@@ -120,7 +120,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, initialCriteria }) => {
         />
       </div>
       
-      <div className="search-bar__field">
+      <div className="search-bar__field search-bar__field--checkout">
         <label htmlFor="check-out">Check-out</label>
         <input
           id="check-out"
@@ -132,34 +132,36 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, initialCriteria }) => {
         />
       </div>
       
-      <div className="search-bar__field">
+      <div className="search-bar__field search-bar__field--guests">
         <label htmlFor="guests">Guests</label>
-        <input
+        <select
           id="guests"
-          type="number"
-          min="1"
-          max="10"
           value={guests}
           onChange={handleGuestsChange}
           required
-        />
+        >
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
+            <option key={num} value={num}>{num}</option>
+          ))}
+        </select>
       </div>
       
-      <div className="search-bar__field">
+      <div className="search-bar__field search-bar__field--rooms">
         <label htmlFor="rooms">Rooms</label>
-        <input
+        <select
           id="rooms"
-          type="number"
-          min="1"
-          max="5"
           value={rooms}
           onChange={handleRoomsChange}
           required
-        />
+        >
+          {[1, 2, 3, 4, 5].map(num => (
+            <option key={num} value={num}>{num}</option>
+          ))}
+        </select>
       </div>
       
       <button type="submit" className="search-bar__submit">
-        Search
+        <span className="search-bar__submit-text">Search</span>
       </button>
     </form>
   );
